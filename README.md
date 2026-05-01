@@ -1,8 +1,16 @@
 # GFS Weather Pipeline
 
-A compact portfolio project that demonstrates a local meteorological pipeline for the **NOAA Global Forecast System (GFS)**.
+A compact portfolio project that shows how to structure a repository for humans and coding agents first, with a NOAA GFS pipeline as the concrete example.
 
-The repository downloads a short 72h GFS run, extracts point forecasts, and plots a focused set of maps:
+The emphasis here is not only the weather workflow. It is the repository shape itself:
+
+- `AGENTS.md` for cross-agent operating rules;
+- `CLAUDE.md` and `.claude/` for Claude Code behavior;
+- `.github/copilot-instructions.md` and `.github/instructions/` for Copilot and GitHub-aware guidance;
+- `.github/prompts/` for reusable task prompts;
+- a small local GFS pipeline that gives those instructions something real to operate on.
+
+The pipeline downloads a short 72h GFS run, extracts point forecasts, and plots a focused set of maps:
 
 - surface wind speed;
 - 2m temperature;
@@ -22,34 +30,35 @@ It intentionally generates **only five figures per variable** by default (`f000`
 - A small Docker image for local runs.
 - Agent-ready repository conventions for Claude Code, Codex, and GitHub Copilot.
 
-## Map Examples
-
-These are lightweight portfolio previews. Real PNG maps are generated locally from downloaded GFS GRIB2 files.
-
-| Surface wind | 2m temperature | 500 hPa geopotential |
-|---|---|---|
-| ![Surface wind example](docs/assets/sample-surface-wind.svg) | ![Temperature example](docs/assets/sample-temperature.svg) | ![500 hPa geopotential example](docs/assets/sample-geopotential-500.svg) |
-
-Generated maps are written to:
-
-```text
-data/maps/surface_wind/
-data/maps/temperature_2m/
-data/maps/geopotential_500hpa/
-```
-
 ## Agent-Ready Repository
 
-This repository is also a small example of how to structure a codebase for multiple AI coding agents.
+This repository is a small example of how to structure a codebase for multiple AI coding agents.
 
-- `AGENTS.md` gives Codex and other agents the project scope, guardrails, and validation commands.
-- `CLAUDE.md` and `.claude/rules/` give Claude Code concise local rules.
-- `.github/copilot-instructions.md` and `.github/instructions/` guide GitHub Copilot and agentic GitHub tooling.
-- `.github/prompts/` stores reusable review prompts.
+- `AGENTS.md` is the top-level operating contract. It tells any agent what the repository is for, what not to touch, and how to validate changes.
+- `CLAUDE.md` is the Claude-facing entry point. It points Claude Code to the shared rules and keeps the local experience aligned.
+- `.claude/rules/` holds Claude-specific behavior rules. Add task-focused rules there when a new workflow needs stricter guidance.
+- `.github/copilot-instructions.md` is the Copilot-facing context file. It helps Copilot stay consistent with the local-first scope.
+- `.github/instructions/` is where GitHub-oriented guidance lives. Use it for reusable instructions that should apply across reviews, prompts, and agent workflows.
+- `.github/prompts/` stores reusable prompts for recurring tasks, such as local-run review or repo cleanup.
 
-The point is not to add automation for its own sake. The point is to make the repository readable to humans and agents, so Claude, Codex, and Copilot all receive the same expectations: local execution, no secrets, no generated data in git, and a narrow GFS plotting scope.
+The point is to make the repository readable to humans and agents, so Claude, Codex, and Copilot all receive the same expectations: local execution, no secrets, no generated data in git, and a narrow GFS plotting scope.
 
 There are deliberately **no GitHub Actions workflows** here. This portfolio repo is about local execution and agent collaboration patterns, not CI/CD.
+
+## How To Reuse It
+
+If you want to turn this into your own agent-friendly repo, copy the structure and then rename the instruction files to match your project.
+
+1. Clone or fork the repository into your own GitHub account.
+2. Rename the repo for your goal, for example `my-agent-playground` or `my-weather-pipeline`.
+3. Update `README.md` first so the human-facing story matches your new use case.
+4. Edit `AGENTS.md` to describe your scope, guardrails, and validation commands.
+5. Edit `CLAUDE.md` and `.claude/rules/` if you want Claude-specific behavior or task rules.
+6. Edit `.github/copilot-instructions.md` so Copilot sees the same constraints.
+7. Add or replace prompts in `.github/prompts/` for recurring jobs in your repo.
+8. Keep the structure stable and add task-specific instructions instead of scattering policy into random notes.
+
+For new tasks, create a new rule or prompt rather than overloading the existing ones. For example, if you add another pipeline, create a task-specific prompt and a concise rule for that pipeline instead of expanding the GFS instructions until they cover everything.
 
 ## Repository Layout
 

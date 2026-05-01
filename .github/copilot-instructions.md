@@ -9,6 +9,6 @@ Copilot should prioritize:
 - local reproducibility over CI/CD or cloud deployment;
 - explicit README updates when commands or outputs change;
 - agent interoperability with Claude Code, Codex, and Copilot.
+- use the instruction files as the project contract when introducing new tasks or new repos.
 
 Do not suggest GitHub Actions workflows for this repository. The portfolio goal is local execution plus agent-readable project instructions.
-

@@ -10,4 +10,4 @@ When changing code:
 - Keep map products limited to surface wind, 2m temperature, and 500 hPa geopotential height.
 - Keep default download/plot coverage limited to five forecast hours through 72h.
 - Do not introduce production infrastructure or workflow automation.
-
+- If you add a new task family, create a dedicated Claude rule file instead of overloading the GFS rule.
