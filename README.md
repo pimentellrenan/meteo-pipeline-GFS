@@ -45,6 +45,40 @@ This repository is a small example of how to structure a codebase for multiple A
 
 The point is to make the repository readable to humans and agents, so Claude, Codex, and Copilot all receive the same expectations: local execution, no secrets, no generated data in git, and a narrow GFS plotting scope.
 
+## Agent Context Matrix
+
+This table makes the repository contract explicit: which file is intended to be read by which tool or workflow.
+
+| File or path | Read by | Purpose |
+|---|---|---|
+| `README.md` | Humans, Codex, Claude Code, Copilot | Primary human-facing source of truth for scope, CLI, and local workflow |
+| `AGENTS.md` | Any coding agent | Cross-agent operating contract and required reading list |
+| `CLAUDE.md` | Claude Code | Claude-specific entry point plus links to shared rules |
+| `.github/copilot-instructions.md` | GitHub Copilot | Copilot-facing repository constraints and scope |
+| `.github/instructions/default.instructions.md` | GitHub tooling, Copilot chat contexts, agents reusing GitHub instruction files | Default repository-wide AI instructions |
+| `.github/instructions/pipeline-system.instructions.md` | Agents changing `src/gfs_pipeline/cli.py`, `src/gfs_pipeline/pipeline.py`, `src/gfs_pipeline/noaa.py`, or `src/gfs_pipeline/transform.py` | Pipeline architecture, invariants, and validation expectations |
+| `.github/instructions/meteo-plot-system.instructions.md` | Agents changing `src/gfs_pipeline/plotting.py` | Plotting architecture, variable mapping, and review checklist |
+| `.claude/rules/doc-sync.md` | Claude Code and any agent following repo policy | Documentation sync rules for code changes |
+| `.claude/rules/pipeline.md` | Claude Code and agents touching pipeline code | Condensed pipeline guardrails |
+| `.claude/rules/plotting.md` | Claude Code and agents touching plotting code | Condensed plotting guardrails |
+| `.github/prompts/debug-pipeline.prompt.md` | Humans or agents invoking `/debug-pipeline` | Reusable prompt for suspicious download or extraction runs |
+| `.github/prompts/fix-plot.prompt.md` | Humans or agents invoking `/fix-plot` | Reusable prompt for broken or implausible map output |
+| `.agents/skills/local-pipeline-preflight/SKILL.md` | Agents using the `local-pipeline-preflight` skill | Local readiness checks before code changes or validation runs |
+| `.agents/skills/plot-review/SKILL.md` | Agents using the `plot-review` skill | Review workflow for plotting changes and local reproducibility |
+
+## Real Task Examples
+
+Use these examples as the expected reading and validation workflow for common repository tasks.
+
+| Task | Read first | Then check | Minimum validation |
+|---|---|---|---|
+| Change CLI behavior in `src/gfs_pipeline/cli.py` | `README.md`, `AGENTS.md`, `CLAUDE.md` | `.github/instructions/default.instructions.md`, `.github/instructions/pipeline-system.instructions.md`, `.claude/rules/doc-sync.md` | `gfs-pipeline --help` |
+| Change pipeline orchestration or download logic | `README.md`, `AGENTS.md`, `CLAUDE.md` | `.github/instructions/pipeline-system.instructions.md`, `.claude/rules/pipeline.md`, `.claude/rules/doc-sync.md` | `gfs-pipeline download-72h --help` |
+| Change plotting behavior in `src/gfs_pipeline/plotting.py` | `README.md`, `AGENTS.md`, `CLAUDE.md` | `.github/instructions/meteo-plot-system.instructions.md`, `.claude/rules/plotting.md`, `.agents/skills/plot-review/SKILL.md` | `gfs-pipeline plot-maps --help` |
+| Review a plotting change without expanding scope | `README.md`, `AGENTS.md` | `.github/instructions/meteo-plot-system.instructions.md`, `.agents/skills/plot-review/SKILL.md` | `gfs-pipeline plot-maps --date 20260501 --cycle 00` |
+
+For a CLI task, the expected agent behavior is: read `README.md`, `AGENTS.md`, `CLAUDE.md`, `.github/instructions/default.instructions.md`, `.github/instructions/pipeline-system.instructions.md`, and `.claude/rules/doc-sync.md`; make the change; then validate with `gfs-pipeline --help` and update the CLI docs in the same change.
+
 ## How To Reuse It
 
 If you want to turn this into your own agent-friendly repo, copy the structure and then rename the instruction files to match your project.
