@@ -16,6 +16,7 @@ COPY config/ ./config/
 RUN pip install --no-cache-dir -e .
 
 ENV PYTHONUNBUFFERED=1
+ENV MPLBACKEND=Agg
 
 ENTRYPOINT ["gfs-pipeline"]
 CMD ["--help"]

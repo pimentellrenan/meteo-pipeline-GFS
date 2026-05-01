@@ -42,7 +42,8 @@ def run(
 @click.option("--cycle", required=True, type=click.Choice(["00", "06", "12", "18"]), help="GFS cycle.")
 def download_72h_command(run_date: str, cycle: str) -> None:
     """Download five GFS steps covering 72 hours."""
-    files = download_72h(run_date=run_date, cycle=cycle)
+    click.echo(f"Downloading compact 72h set for {run_date} {cycle}Z")
+    files = download_72h(run_date=run_date, cycle=cycle, progress_callback=click.echo)
     click.echo(f"Downloaded {len(files)} GRIB2 files: {DEFAULT_FORECAST_HOURS}")
 
 
@@ -52,5 +53,11 @@ def download_72h_command(run_date: str, cycle: str) -> None:
 @click.option("--output-dir", type=click.Path(file_okay=False, path_type=Path), default=None)
 def plot_maps(run_date: str, cycle: str, output_dir: Path | None) -> None:
     """Plot surface wind, 2m temperature, and 500 hPa geopotential maps."""
-    files = plot_72h_maps(run_date=run_date, cycle=cycle, output_dir=output_dir)
+    click.echo(f"Plotting 15 portfolio maps for {run_date} {cycle}Z")
+    files = plot_72h_maps(
+        run_date=run_date,
+        cycle=cycle,
+        output_dir=output_dir,
+        progress_callback=click.echo,
+    )
     click.echo(f"Wrote {len(files)} map files")

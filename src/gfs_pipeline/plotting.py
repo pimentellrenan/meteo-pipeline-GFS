@@ -1,8 +1,14 @@
 from pathlib import Path
+import warnings
 
 import cfgrib
-import matplotlib.pyplot as plt
+import matplotlib
 import numpy as np
+
+
+matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt
 
 
 VARIABLES = {
@@ -28,7 +34,13 @@ VARIABLES = {
 
 
 def _open_datasets(grib_file: Path):
-    return cfgrib.open_datasets(grib_file, backend_kwargs={"indexpath": ""})
+    with warnings.catch_warnings():
+        warnings.filterwarnings(
+            "ignore",
+            message="In a future version of xarray the default value for compat will change",
+            category=FutureWarning,
+        )
+        return cfgrib.open_datasets(grib_file, backend_kwargs={"indexpath": ""})
 
 
 def _find_variable(datasets, names: set[str], level: int | None = None):

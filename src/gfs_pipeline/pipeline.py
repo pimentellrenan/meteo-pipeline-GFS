@@ -42,20 +42,29 @@ def run_pipeline(
     return destination
 
 
-def download_72h(run_date: str, cycle: str, forecast_hours: list[int] | None = None) -> list[Path]:
+def download_72h(
+    run_date: str,
+    cycle: str,
+    forecast_hours: list[int] | None = None,
+    progress_callback=None,
+) -> list[Path]:
     """Download the compact 72h GFS portfolio set."""
     hours = forecast_hours or DEFAULT_FORECAST_HOURS
-    return [
-        download_grib(
-            run_date=run_date,
-            cycle=cycle,
-            forecast_hour=hour,
-            output_dir=settings.data_dir,
-            timeout_seconds=settings.timeout_seconds,
-            max_retries=settings.max_retries,
+    downloaded: list[Path] = []
+    for hour in hours:
+        if progress_callback is not None:
+            progress_callback(f"Downloading forecast hour f{hour:03d}")
+        downloaded.append(
+            download_grib(
+                run_date=run_date,
+                cycle=cycle,
+                forecast_hour=hour,
+                output_dir=settings.data_dir,
+                timeout_seconds=settings.timeout_seconds,
+                max_retries=settings.max_retries,
+            )
         )
-        for hour in hours
-    ]
+    return downloaded
 
 
 def plot_72h_maps(
@@ -63,12 +72,15 @@ def plot_72h_maps(
     cycle: str,
     forecast_hours: list[int] | None = None,
     output_dir: Path | None = None,
+    progress_callback=None,
 ) -> list[Path]:
     """Plot five figures for each portfolio variable."""
     hours = forecast_hours or DEFAULT_FORECAST_HOURS
     plot_dir = output_dir or settings.map_dir
     created: list[Path] = []
     for hour in hours:
+        if progress_callback is not None:
+            progress_callback(f"Plotting forecast hour f{hour:03d}")
         grib_file = settings.data_dir / f"gfs_{run_date}_{cycle}_f{hour:03d}.grib2"
         if not grib_file.exists():
             raise FileNotFoundError(f"GRIB2 file not found: {grib_file}")

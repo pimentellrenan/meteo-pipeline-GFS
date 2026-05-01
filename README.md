@@ -80,6 +80,12 @@ python -m venv .venv
 pip install -e .
 ```
 
+On Linux/macOS, activate with:
+
+```bash
+source .venv/bin/activate
+```
+
 Download the compact 72h GFS set:
 
 ```bash
@@ -91,6 +97,8 @@ Plot the three map products:
 ```bash
 gfs-pipeline plot-maps --date 20260501 --cycle 00
 ```
+
+The plotting step creates 15 PNG files in total and may take a little longer than the CSV extraction step.
 
 Run a single point-extraction CSV:
 

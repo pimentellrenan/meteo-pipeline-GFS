@@ -1,7 +1,8 @@
 from pathlib import Path
+import warnings
 
-import pandas as pd
 import cfgrib
+import pandas as pd
 
 
 VARIABLE_UNITS = {
@@ -29,10 +30,20 @@ def _normalize_variable_name(name: str) -> str:
     return name
 
 
+def _open_datasets(grib_file: Path):
+    with warnings.catch_warnings():
+        warnings.filterwarnings(
+            "ignore",
+            message="In a future version of xarray the default value for compat will change",
+            category=FutureWarning,
+        )
+        return cfgrib.open_datasets(grib_file, backend_kwargs={"indexpath": ""})
+
+
 def extract_points(grib_file: Path, points_file: Path, run_date: str, cycle: str, forecast_hour: int) -> pd.DataFrame:
     """Extract nearest-gridpoint values from a GRIB2 file into a tidy table."""
     points = load_points(points_file)
-    datasets = cfgrib.open_datasets(grib_file, backend_kwargs={"indexpath": ""})
+    datasets = _open_datasets(grib_file)
     records: list[dict] = []
 
     for dataset in datasets:
