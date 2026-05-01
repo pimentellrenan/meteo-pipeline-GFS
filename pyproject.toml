@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gfs-weather-pipeline"
+version = "0.1.0"
+description = "Compact NOAA GFS ETL pipeline for portfolio use"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "cfgrib>=0.9.10",
+    "click>=8.1",
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "python-dotenv>=1.0",
+    "requests>=2.31",
+    "xarray>=2023.1",
+]
+
+[project.scripts]
+gfs-pipeline = "gfs_pipeline.cli:cli"
+
+[tool.setuptools.packages.find]
+where = ["src"]
