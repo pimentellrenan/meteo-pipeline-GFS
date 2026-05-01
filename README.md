@@ -45,8 +45,6 @@ This repository is a small example of how to structure a codebase for multiple A
 
 The point is to make the repository readable to humans and agents, so Claude, Codex, and Copilot all receive the same expectations: local execution, no secrets, no generated data in git, and a narrow GFS plotting scope.
 
-There are deliberately **no GitHub Actions workflows** here. This portfolio repo is about local execution and agent collaboration patterns, not CI/CD.
-
 ## How To Reuse It
 
 If you want to turn this into your own agent-friendly repo, copy the structure and then rename the instruction files to match your project.
@@ -168,7 +166,3 @@ run_date,cycle,forecast_hour,point_name,latitude,longitude,variable,value,unit
 ```
 
 See [examples/sample_forecast.csv](examples/sample_forecast.csv).
-
-## Notes
-
-This is a portfolio-friendly version of a larger operational meteorological ingestion system. It keeps the public repository focused on one reproducible model, one short run, three map products, and agent-friendly project instructions.
