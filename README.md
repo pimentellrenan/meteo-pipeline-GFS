@@ -6,6 +6,7 @@ The emphasis here is not only the weather workflow. It is the repository shape i
 
 - `AGENTS.md` for cross-agent operating rules;
 - `CLAUDE.md` and `.claude/` for Claude Code behavior;
+- `.agents/skills/` for reusable agent workflows;
 - `.github/copilot-instructions.md` and `.github/instructions/` for Copilot and GitHub-aware guidance;
 - `.github/prompts/` for reusable task prompts;
 - a small local GFS pipeline that gives those instructions something real to operate on.
@@ -37,9 +38,10 @@ This repository is a small example of how to structure a codebase for multiple A
 - `AGENTS.md` is the top-level operating contract. It tells any agent what the repository is for, what not to touch, and how to validate changes.
 - `CLAUDE.md` is the Claude-facing entry point. It points Claude Code to the shared rules and keeps the local experience aligned.
 - `.claude/rules/` holds Claude-specific behavior rules. Add task-focused rules there when a new workflow needs stricter guidance.
+- `.agents/skills/` holds portable skills that describe repeatable agent workflows. In this repo they cover local pipeline preflight and map review, but the same pattern can be copied into another repository and rewritten for data quality checks, deployment review, documentation audits, or domain-specific debugging.
 - `.github/copilot-instructions.md` is the Copilot-facing context file. It helps Copilot stay consistent with the local-first scope.
 - `.github/instructions/` is where GitHub-oriented guidance lives. Use it for reusable instructions that should apply across reviews, prompts, and agent workflows.
-- `.github/prompts/` stores reusable prompts for recurring tasks, such as local-run review or repo cleanup.
+- `.github/prompts/` stores reusable prompts for recurring tasks, such as pipeline debugging and plotting fixes.
 
 The point is to make the repository readable to humans and agents, so Claude, Codex, and Copilot all receive the same expectations: local execution, no secrets, no generated data in git, and a narrow GFS plotting scope.
 
@@ -54,11 +56,12 @@ If you want to turn this into your own agent-friendly repo, copy the structure a
 3. Update `README.md` first so the human-facing story matches your new use case.
 4. Edit `AGENTS.md` to describe your scope, guardrails, and validation commands.
 5. Edit `CLAUDE.md` and `.claude/rules/` if you want Claude-specific behavior or task rules.
-6. Edit `.github/copilot-instructions.md` so Copilot sees the same constraints.
-7. Add or replace prompts in `.github/prompts/` for recurring jobs in your repo.
-8. Keep the structure stable and add task-specific instructions instead of scattering policy into random notes.
+6. Edit `.agents/skills/` to describe repeatable agent workflows that matter for your project.
+7. Edit `.github/copilot-instructions.md` so Copilot sees the same constraints.
+8. Add or replace prompts in `.github/prompts/` for recurring jobs in your repo.
+9. Keep the structure stable and add task-specific instructions instead of scattering policy into random notes.
 
-For new tasks, create a new rule or prompt rather than overloading the existing ones. For example, if you add another pipeline, create a task-specific prompt and a concise rule for that pipeline instead of expanding the GFS instructions until they cover everything.
+For new tasks, create a new rule, prompt, or skill rather than overloading the existing ones. For example, if you add another pipeline, create a task-specific prompt and a concise rule for that pipeline instead of expanding the GFS instructions until they cover everything.
 
 ## Repository Layout
 
@@ -75,6 +78,7 @@ config/
 examples/
   sample_forecast.csv
 .claude/          Claude Code rules
+.agents/          Portable agent skills
 .github/          Copilot instructions and reusable prompts
 AGENTS.md         Cross-agent operating guide
 ```

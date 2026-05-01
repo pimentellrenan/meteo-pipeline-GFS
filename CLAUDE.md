@@ -1,13 +1,43 @@
 @AGENTS.md
 
-# Claude Code Notes
+# Claude Code Instructions
 
-This repository is a compact portfolio version of a GFS weather pipeline. Claude should optimize for clarity, reproducibility, and explainable local execution.
+## Rules
 
-When changing code:
+- After modifying CLI commands, verify the CLI sections in `README.md` and `AGENTS.md`.
+- After modifying plotting behavior, verify `.github/instructions/meteo-plot-system.instructions.md`.
+- After modifying download, extraction, or point-processing behavior, verify `.github/instructions/pipeline-system.instructions.md`.
 
-- Read `README.md`, `AGENTS.md`, and `.claude/rules/gfs-pipeline.md`.
-- Keep map products limited to surface wind, 2m temperature, and 500 hPa geopotential height.
-- Keep default download/plot coverage limited to five forecast hours through 72h.
-- Do not introduce production infrastructure or workflow automation.
-- If you add a new task family, create a dedicated Claude rule file instead of overloading the GFS rule.
+## Self-Updating Documentation
+
+When making structural changes, always check `.claude/rules/doc-sync.md` to keep human docs and agent docs aligned in the same change.
+
+### Key Mappings
+
+- New CLI command -> update `README.md`, `AGENTS.md`, `.github/instructions/default.instructions.md`
+- Pipeline behavior change -> verify `.github/instructions/pipeline-system.instructions.md`
+- Plotting behavior change -> verify `.github/instructions/meteo-plot-system.instructions.md`
+- New directory under `src/` -> update `README.md` and `AGENTS.md`
+
+## Available Slash-Style Prompts
+
+| Command | File | Purpose |
+|---|---|---|
+| `/debug-pipeline` | `.github/prompts/debug-pipeline.prompt.md` | Diagnose a broken or suspicious GFS data run |
+| `/fix-plot` | `.github/prompts/fix-plot.prompt.md` | Diagnose and correct map-generation issues |
+
+## Context Files
+
+| Path pattern | Loaded file | Content |
+|---|---|---|
+| `src/gfs_pipeline/plotting.py` | `.github/instructions/meteo-plot-system.instructions.md` | Plotting rules, invariants, and review workflow |
+| `src/gfs_pipeline/pipeline.py`, `src/gfs_pipeline/noaa.py`, `src/gfs_pipeline/transform.py` | `.github/instructions/pipeline-system.instructions.md` | Download, extraction, and sanity rules |
+| `src/gfs_pipeline/plotting.py` | `.claude/rules/plotting.md` | Condensed plotting rules |
+| `src/gfs_pipeline/pipeline.py`, `src/gfs_pipeline/noaa.py`, `src/gfs_pipeline/transform.py` | `.claude/rules/pipeline.md` | Condensed pipeline rules |
+
+## Environment
+
+- Windows development with PowerShell is supported.
+- A local virtual environment is expected for Python runs.
+- PowerShell activation: `.venv\Scripts\activate`.
+- bash/zsh activation: `source .venv/bin/activate`.
