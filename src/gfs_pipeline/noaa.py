@@ -8,16 +8,21 @@ GFS_BASE_URL = "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25.pl"
 
 
 def build_gfs_url(run_date: str, cycle: str, forecast_hour: int) -> str:
-    """Build a NOMADS filtered GFS URL for a small surface-field GRIB2 file."""
+    """Build a NOMADS filtered GFS URL for portfolio fields."""
     forecast = f"f{forecast_hour:03d}"
     file_name = f"gfs.t{cycle}z.pgrb2.0p25.{forecast}"
     directory = f"/gfs.{run_date}/{cycle}/atmos"
     params = {
         "file": file_name,
+        "lev_10_m_above_ground": "on",
         "lev_2_m_above_ground": "on",
+        "lev_500_mb": "on",
         "lev_surface": "on",
+        "var_HGT": "on",
         "var_TMP": "on",
         "var_APCP": "on",
+        "var_UGRD": "on",
+        "var_VGRD": "on",
         "dir": directory,
     }
     query = "&".join(f"{key}={value}" for key, value in params.items())

@@ -2,7 +2,11 @@ from pathlib import Path
 
 from .config import settings
 from .noaa import download_grib
+from .plotting import plot_grib_maps
 from .transform import extract_points
+
+
+DEFAULT_FORECAST_HOURS = [0, 18, 36, 54, 72]
 
 
 def run_pipeline(
@@ -36,3 +40,37 @@ def run_pipeline(
     destination = output_path / f"gfs_points_{run_date}_{cycle}_f{forecast_hour:03d}.csv"
     frame.to_csv(destination, index=False)
     return destination
+
+
+def download_72h(run_date: str, cycle: str, forecast_hours: list[int] | None = None) -> list[Path]:
+    """Download the compact 72h GFS portfolio set."""
+    hours = forecast_hours or DEFAULT_FORECAST_HOURS
+    return [
+        download_grib(
+            run_date=run_date,
+            cycle=cycle,
+            forecast_hour=hour,
+            output_dir=settings.data_dir,
+            timeout_seconds=settings.timeout_seconds,
+            max_retries=settings.max_retries,
+        )
+        for hour in hours
+    ]
+
+
+def plot_72h_maps(
+    run_date: str,
+    cycle: str,
+    forecast_hours: list[int] | None = None,
+    output_dir: Path | None = None,
+) -> list[Path]:
+    """Plot five figures for each portfolio variable."""
+    hours = forecast_hours or DEFAULT_FORECAST_HOURS
+    plot_dir = output_dir or settings.map_dir
+    created: list[Path] = []
+    for hour in hours:
+        grib_file = settings.data_dir / f"gfs_{run_date}_{cycle}_f{hour:03d}.grib2"
+        if not grib_file.exists():
+            raise FileNotFoundError(f"GRIB2 file not found: {grib_file}")
+        created.extend(plot_grib_maps(grib_file, run_date, cycle, hour, plot_dir))
+    return created

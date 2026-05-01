@@ -2,7 +2,7 @@ from pathlib import Path
 
 import click
 
-from .pipeline import run_pipeline
+from .pipeline import DEFAULT_FORECAST_HOURS, download_72h, plot_72h_maps, run_pipeline
 
 
 @click.group()
@@ -35,3 +35,22 @@ def run(
         download=download,
     )
     click.echo(f"Wrote {destination}")
+
+
+@cli.command(name="download-72h")
+@click.option("--date", "run_date", required=True, help="GFS run date in YYYYMMDD format.")
+@click.option("--cycle", required=True, type=click.Choice(["00", "06", "12", "18"]), help="GFS cycle.")
+def download_72h_command(run_date: str, cycle: str) -> None:
+    """Download five GFS steps covering 72 hours."""
+    files = download_72h(run_date=run_date, cycle=cycle)
+    click.echo(f"Downloaded {len(files)} GRIB2 files: {DEFAULT_FORECAST_HOURS}")
+
+
+@cli.command(name="plot-maps")
+@click.option("--date", "run_date", required=True, help="GFS run date in YYYYMMDD format.")
+@click.option("--cycle", required=True, type=click.Choice(["00", "06", "12", "18"]), help="GFS cycle.")
+@click.option("--output-dir", type=click.Path(file_okay=False, path_type=Path), default=None)
+def plot_maps(run_date: str, cycle: str, output_dir: Path | None) -> None:
+    """Plot surface wind, 2m temperature, and 500 hPa geopotential maps."""
+    files = plot_72h_maps(run_date=run_date, cycle=cycle, output_dir=output_dir)
+    click.echo(f"Wrote {len(files)} map files")
